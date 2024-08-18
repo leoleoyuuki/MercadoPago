@@ -57,10 +57,10 @@ export default async function handler(req, res) {
           console.log("Pagamento aprovado:", payment.body);
 
           // Exemplo: Enviar e-mail de confirmação
-          sendEmail(payment.body.payer.email, "Pagamento confirmado");
+        //   sendEmail(payment.body.payer.email, "Pagamento confirmado");
 
           // Exemplo: Atualizar o status do pedido no banco de dados
-          updateOrderStatus(paymentId, "pago");
+        //   updateOrderStatus(paymentId, "pago");
         } else {
           console.log("Pagamento não aprovado:", payment.body);
         }
@@ -73,5 +73,8 @@ export default async function handler(req, res) {
     res.status(200).json({ status: "REQUISIÇAO RECEBIDA" });
   } else if (req.method === "GET") {
     res.status(200).json({ status: "GET RECEBIDO" });
+  } else {
+    res.setHeader("Allow", "POST");
+    res.status(405).end("Method Not Allowed");
   }
 }
