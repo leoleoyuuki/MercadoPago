@@ -38,7 +38,7 @@
 
 
 
-import express from 'express';
+var express = require('express');
 import mercadopago from 'mercadopago';
 
 const app = express();
