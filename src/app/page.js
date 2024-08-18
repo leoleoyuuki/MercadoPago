@@ -7,16 +7,9 @@ const PaymentScreen = () => {
 
 
   useEffect(() => {
-    const pStatus = localStorage.getItem('paymentStatus');
-    if (pStatus === "success") {
-      setPaymentStatus(pStatus);
-      localStorage.removeItem('paymentStatus');
-      alert('Pagamento aprovado');
-    } else if (pStatus === "error") {
-      setPaymentStatus('Erro ao processar o pagamento');
-      localStorage.removeItem('paymentStatus');
-      alert('Erro ao processar o pagamento');
-    }
+
+    const status = localStorage.getItem('paymentStatus')
+    alert(status)
   }, []);
 
 
