@@ -7,7 +7,8 @@ const addItem = async () => {
     const docRef = await addDoc(collection(db, "Pessoas"), {
       Nome: "FUNCIONOU"
     });
-    
+    console.log("Document written with ID: ", docRef.id);
+
   } catch (e) {
     console.error("Error adding document: ", e);
   }
