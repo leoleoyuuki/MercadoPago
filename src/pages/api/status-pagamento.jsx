@@ -48,9 +48,8 @@ export default async function handler(req, res) {
         console.error("Erro ao processar a notificação:", error);
       }
     }
-
-    res.status(200).json({ status: "REQUISIÇAO RECEBIDA" });
     addItem()
+    res.status(200).json({ status: "REQUISIÇAO RECEBIDA" });
   } else if (req.method === "GET") {
     res.status(200).json({ status: "GET RECEBIDO" });
   } else {
