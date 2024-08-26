@@ -22,6 +22,7 @@ export default async function handler(req, res) {
     const topic = req.body.topic;
     const data = req.body.data;
     console.log("requisição recebida", req.body);
+    addItem()
     if (topic === "payment.updated") {
       const paymentId = data.id;
 
@@ -48,7 +49,6 @@ export default async function handler(req, res) {
         console.error("Erro ao processar a notificação:", error);
       }
     }
-    addItem()
     res.status(200).json({ status: "REQUISIÇAO RECEBIDA" });
   } else if (req.method === "GET") {
     res.status(200).json({ status: "GET RECEBIDO" });
