@@ -71,9 +71,8 @@ export default async function handler(req, res) {
 
     res.sendStatus(200);
     res.status(200).json({ status: "REQUISIÇAO RECEBIDA" });
-  } else if (req.method === "GET") {
-    res.status(200).json({ status: "GET RECEBIDO" });
-  } else {
+  } 
+ else {
     res.setHeader("Allow", "POST");
     res.status(405).end("Method Not Allowed");
   }
