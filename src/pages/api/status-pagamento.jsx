@@ -1,6 +1,6 @@
 
 import mercadopago from "mercadopago";
-import {addDoc,collection,db,deleteDoc,doc,getDocs,updateDoc} from "../../service/firebasesdk"
+import {addDoc,collection,db} from "../../service/firebasesdk"
 
 
 const addItem = async () => {
@@ -8,9 +8,7 @@ const addItem = async () => {
     const docRef = await addDoc(collection(db, "Pessoas"), {
       Nome: "FUNCIONOU"
     });
-    console.log("Document written with ID: ", docRef.id);
-    alert("Produto Cadastrado");
-    getItem()
+    
   } catch (e) {
     console.error("Error adding document: ", e);
   }
@@ -23,7 +21,7 @@ export default async function handler(req, res) {
     const hello = req.hello;
     const topic = req.body.topic;
     const data = req.body.data;
-
+    console.log("requisição recebida", req.body);
     if (topic === "payment.updated") {
       const paymentId = data.id;
 
@@ -51,7 +49,6 @@ export default async function handler(req, res) {
       }
     }
 
-    res.sendStatus(200);
     res.status(200).json({ status: "REQUISIÇAO RECEBIDA" });
     addItem()
   } else if (req.method === "GET") {
