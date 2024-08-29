@@ -15,8 +15,31 @@ const addItem = async () => {
   }
 };
 
+import Cors from 'cors';
+
+// Inicializa o middleware CORS
+const cors = Cors({
+  methods: ['GET', 'HEAD', 'POST'], // Métodos permitidos
+  origin: '*', // Origem permitida (use '*' para permitir todas)
+});
+
+// Função auxiliar para executar middlewares
+function runMiddleware(req, res, fn) {
+  return new Promise((resolve, reject) => {
+    fn(req, res, (result) => {
+      if (result instanceof Error) {
+        return reject(result);
+      }
+      return resolve(result);
+    });
+  });
+}
+
+
 
 export default async function handler(req, res) {
+  await runMiddleware(req, res, cors);
+
   
   if (req.method === "POST") {
     console.log("requisição recebida", req.body);
