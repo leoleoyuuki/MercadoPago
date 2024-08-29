@@ -2,22 +2,22 @@
 import {addDoc,collection,db} from "../../service/firebasesdk"
 import Cors from 'cors';
 
-const addItem = async () => {
-  try {
-    const docRef = await addDoc(collection(db, "Pessoas"), {
-      Nome: "FUNCIONOU"
-    });
-    console.log("Document written with ID: ", docRef.id);
 
-  } catch (e) {
-    console.error("Error adding document: ", e);
-    console.log("Error adding document: ", e);
-  }
-};
+export default async function handler(req, res) {
+  const addItem = async () => {
+    try {
+      const docRef = await addDoc(collection(db, "Pessoas"), {
+        Nome: "FUNCIONOU"
+      });
+      console.log("Document written with ID: ", docRef.id);
+  
+    } catch (e) {
+      console.error("Error adding document: ", e);
+      console.log("Error adding document: ", e);
+    }
+  };
 
-
-
-// Inicializa o middleware CORS
+  // Inicializa o middleware CORS
 const cors = Cors({
   methods: ['GET', 'HEAD', 'POST'], // Métodos permitidos
   origin: '*', // Origem permitida (use '*' para permitir todas)
@@ -36,8 +36,6 @@ function runMiddleware(req, res, fn) {
 }
 
 
-
-export default async function handler(req, res) {
   await runMiddleware(req, res, cors);
 
   
