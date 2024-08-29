@@ -11,6 +11,7 @@ const addItem = async () => {
 
   } catch (e) {
     console.error("Error adding document: ", e);
+    console.log("Error adding document: ", e);
   }
 };
 
