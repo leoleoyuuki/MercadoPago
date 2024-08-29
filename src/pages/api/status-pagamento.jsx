@@ -1,6 +1,6 @@
 
 import {addDoc,collection,db} from "../../service/firebasesdk"
-
+import Cors from 'cors';
 
 const addItem = async () => {
   try {
@@ -15,7 +15,7 @@ const addItem = async () => {
   }
 };
 
-import Cors from 'cors';
+
 
 // Inicializa o middleware CORS
 const cors = Cors({
