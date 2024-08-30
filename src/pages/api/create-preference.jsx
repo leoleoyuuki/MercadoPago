@@ -7,7 +7,7 @@ const MERCADO_PAGO_ACCESS_TOKEN = 'APP_USR-5451710554063836-081815-7828d7b3758fe
 
 export default async function handler(req, res) {
   if (req.method === 'POST') {
-    const { amount, description } = req.body;
+    const { amount, description, payer, id } = req.body;
 
     try {
       console.log('Iniciando criação da preferência de pagamento...');
@@ -23,7 +23,8 @@ export default async function handler(req, res) {
             },
           ],
           payer: {
-            email: 'leo.yuuki@icloud.com',
+            email: payer,
+            userId: id,
           },
         },
         {

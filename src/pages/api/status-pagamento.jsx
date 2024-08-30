@@ -1,10 +1,11 @@
 
 import {addDoc,collection,db} from "../../service/firebasesdk"
 
-const addItem = async () => {
+const addItem = async (userId) => {
   try {
     const docRef = await addDoc(collection(db, "Pessoas"), {
-      Nome: "FUNCIONOU"
+      Nome: "FUNCIONOU",
+      userId: userId
     });
     console.log("Document written with ID: ", docRef.id);
 
@@ -14,14 +15,19 @@ const addItem = async () => {
   }
 };
 
+
 export default async function handler(req, res) {
 
   
   if (req.method === "POST") {
     console.log("requisição recebida", req.body);
-    addItem()
+    const {data} = req.body;
+    const email = data.payer.email;
+    const uid = data.payer.userId;
+
+    addItem(uid);
     
-    res.status(200).json({ status: "REQUISIÇAO RECEBIDA" });
+    res.status(200).json({ status: "REQUISIÇAO RECEBIDA" + email + uid });
   } else if (req.method === "GET") {
     res.status(200).json({ status: "GET RECEBIDO" });
   } else {
