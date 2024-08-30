@@ -109,17 +109,17 @@ const PaymentScreen = () => {
           <h3 className="text-3xl font-semibold mb-8">Por que escolher nosso curso?</h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="p-6 bg-gray-100 rounded-lg shadow-md">
-              <Image width={100} height={100} alt={""} src="https://via.placeholder.com/100"  className="mx-auto mb-4" />
+              <Image width={100} height={100} alt={"teste"} src="https://via.placeholder.com/100"  className="mx-auto mb-4" />
               <h4 className="text-xl font-bold mb-2">Conteúdo Atualizado</h4>
               <p>Aprenda com as tecnologias mais recentes do mercado.</p>
             </div>
             <div className="p-6 bg-gray-100 rounded-lg shadow-md">
-              <Image width={100} height={100} alt={""} src="https://via.placeholder.com/100"  className="mx-auto mb-4" />
+              <Image width={100} height={100} alt={"teste"} src="https://via.placeholder.com/100"  className="mx-auto mb-4" />
               <h4 className="text-xl font-bold mb-2">Aulas Interativas</h4>
               <p>Experimente uma aprendizagem prática com exemplos do mundo real.</p>
             </div>
             <div className="p-6 bg-gray-100 rounded-lg shadow-md">
-              <Image width={100} height={100} alt={""} src="https://via.placeholder.com/100"  className="mx-auto mb-4" />
+              <Image width={100} height={100} alt={"teste"} src="https://via.placeholder.com/100"  className="mx-auto mb-4" />
               <h4 className="text-xl font-bold mb-2">Suporte 24/7</h4>
               <p>Obtenha ajuda quando precisar com nosso suporte dedicado.</p>
             </div>
@@ -172,17 +172,17 @@ const PaymentScreen = () => {
           <h3 className="text-3xl font-semibold mb-8">O que nossos alunos dizem</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             <div className="p-6 bg-gray-100 rounded-lg shadow-md">
-              <Image width={100} height={100} alt={""} src="https://via.placeholder.com/100"  className="rounded-full mx-auto mb-4" />
+              <Image width={100} height={100} alt={"teste"} src="https://via.placeholder.com/100"  className="rounded-full mx-auto mb-4" />
               <p>"Este curso mudou minha vida! Aprendi muito e consegui um emprego na área."</p>
               <h4 className="text-xl font-bold mt-4">Maria Silva</h4>
             </div>
             <div className="p-6 bg-gray-100 rounded-lg shadow-md">
-              <Image width={100} height={100} alt={""} src="https://via.placeholder.com/100"  className="rounded-full mx-auto mb-4" />
+              <Image width={100} height={100} alt={"teste"} src="https://via.placeholder.com/100"  className="rounded-full mx-auto mb-4" />
               <p>"A melhor decisão que tomei foi assinar este curso. O suporte é excelente!"</p>
               <h4 className="text-xl font-bold mt-4">João Souza</h4>
             </div>
             <div className="p-6 bg-gray-100 rounded-lg shadow-md">
-              <Image width={100} height={100} alt={""} src="https://via.placeholder.com/100"  className="rounded-full mx-auto mb-4" />
+              <Image width={100} height={100} alt={"teste"} src="https://via.placeholder.com/100"  className="rounded-full mx-auto mb-4" />
               <p>"Conteúdo de altíssima qualidade e atualizado com as últimas tecnologias."</p>
               <h4 className="text-xl font-bold mt-4">Carla Pereira</h4>
             </div>
