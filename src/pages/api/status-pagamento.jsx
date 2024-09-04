@@ -3,20 +3,6 @@ import { headers } from "next/headers";
 import {addDoc,collection,db} from "../../service/firebasesdk"
 import axios from "axios";
 
-const addItem = async (uid) => {
-  try {
-    const docRef = await addDoc(collection(db, "Pessoas"), {
-      Nome: "FUNCIONOU",
-      userId: uid,
-    });
-    console.log("Document written with ID: ", docRef.id);
-
-  } catch (e) {
-    console.error("Error adding document: ", e);
-    console.log("Error adding document: ", e);
-  }
-};
-
 
 export default async function handler(req, res) {
 
@@ -36,7 +22,15 @@ export default async function handler(req, res) {
     
       const uid = data.additional_info.payer.first_name;
       console.log('Uid do usuário usando gambiarra: ', uid);
-      addItem(uid);
+      
+      if (uid) {
+        await addDoc(collection(db, "Assinaturas"), {
+          userId: uid,
+          status: 'ativo',
+          dataAssinatura: new Date(),
+        });
+      }
+
     
     } catch (error) {
       console.error('Erro ao fazer a requisição:', error);

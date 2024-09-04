@@ -65,14 +65,6 @@ const PaymentScreen = () => {
       // Após o pagamento, registra a assinatura no Firestore
       const user = auth.currentUser;
 
-      if (user) {
-        await addDoc(collection(db, "Assinaturas"), {
-          userId: user.uid,
-          status: 'ativo',
-          dataAssinatura: new Date(),
-        });
-      }
-
     } catch (error) {
       setPaymentStatus(`Erro ao criar preferência: ${error.message}`);
     }
