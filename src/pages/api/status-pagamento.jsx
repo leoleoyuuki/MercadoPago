@@ -1,11 +1,11 @@
 
 import {addDoc,collection,db} from "../../service/firebasesdk"
+import axios from "axios";
 
 const addItem = async () => {
   try {
     const docRef = await addDoc(collection(db, "Pessoas"), {
       Nome: "FUNCIONOU",
-      userId: userId
     });
     console.log("Document written with ID: ", docRef.id);
 
@@ -20,8 +20,11 @@ export default async function handler(req, res) {
 
   if (req.method === "POST") {
     console.log("requisição recebida", req.body);
+    const id = req.body.data.id;
 
-    addItem();
+    const email = axios.get(`https://api.mercadopago.com/v1/payments/${id}`);
+    console.log(email);
+
     
     res.status(200).json({ status: "REQUISIÇAO RECEBIDA"});
   } else if (req.method === "GET") {
