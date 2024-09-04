@@ -29,6 +29,9 @@ export default async function handler(req, res) {
           status: 'ativo',
           dataAssinatura: new Date(),
         });
+        console.log('Assinatura criada com sucesso!');
+      }else{
+        console.log('Usuário não encontrado');
       }
 
     
