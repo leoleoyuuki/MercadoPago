@@ -2,7 +2,7 @@
 import axios from 'axios';
 
 // Substitua pela sua chave secreta do Mercado Pago
-const MERCADO_PAGO_ACCESS_TOKEN = 'APP_USR-5451710554063836-081815-7828d7b3758fec037016cf253d6dcc62-486596499';
+const MERCADO_PAGO_ACCESS_TOKEN = 'TEST-5451710554063836-081815-2e6df1c787b904657c2fcac56e7b3586-486596499';
 
 
 export default async function handler(req, res) {
@@ -22,9 +22,14 @@ export default async function handler(req, res) {
               quantity: 1,
             },
           ],
+          auto_return: 'approved',
+          back_urls: {
+            success: 'http://localhost:3000/success',
+            // success: 'https://meusite.com.br/success',    
+          },
           payer: {
             email: payer,
-            userId: id,
+            name: id,
           },
         },
         {

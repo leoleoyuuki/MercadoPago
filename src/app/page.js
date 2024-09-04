@@ -20,7 +20,7 @@ const PaymentScreen = () => {
     const status = localStorage.getItem('paymentStatus');
     setPaymentStatus(status);
     setUserId(auth.currentUser?.uid); // Obtém o ID do usuário atual
-  }, []);
+  }, [isSignup]);
 
   const handleAuth = async () => {
     if (isSignup && password !== confirmPassword) {
@@ -29,13 +29,18 @@ const PaymentScreen = () => {
     }
 
     try {
+      let userCredential;
       if (isSignup) {
-        await createUserWithEmailAndPassword(auth, email, password);
+        userCredential = await createUserWithEmailAndPassword(auth, email, password);
       } else {
-        await signInWithEmailAndPassword(auth, email, password);
+        userCredential = await signInWithEmailAndPassword(auth, email, password);
       }
+      const user = userCredential.user;
+      setUserId(user.uid); // Atualiza o ID do usuário após o login/cadastro
       setShowModal(false);
-      handlePayPress(); // Inicia o pagamento após o login/signup
+      // alert(`Usuário (${user.uid}) logado, agora pode clicar para assinar.`);
+       alert(`Usuário logado, agora pode clicar para assinar.`);
+
     } catch (error) {
       setPaymentStatus(`Erro ao autenticar: ${error.message}`);
       setError(error.message); // Exibe o erro ao usuário
@@ -43,18 +48,23 @@ const PaymentScreen = () => {
   };
 
   const handlePayPress = async () => {
+    if (!auth.currentUser) {
+      setShowModal(true); // Abre o modal se o usuário não estiver logado
+      return;
+    }
+
     try {
       const response = await fetch('/api/create-preference', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ amount: 10, description: 'Pagamento de teste', payer: email, id: userId }),
       });
-
       const { preferenceId } = await response.json();
       window.location.href = `https://www.mercadopago.com.br/checkout/v1/redirect?pref_id=${preferenceId}`;
       
       // Após o pagamento, registra a assinatura no Firestore
       const user = auth.currentUser;
+
       if (user) {
         await addDoc(collection(db, "Assinaturas"), {
           userId: user.uid,
@@ -90,7 +100,7 @@ const PaymentScreen = () => {
           <h2 className="text-4xl font-bold mb-4">Aprimore suas habilidades em programação</h2>
           <p className="text-lg mb-8">Assine agora e tenha acesso completo ao nosso curso. Comece a aprender hoje mesmo!</p>
           <button
-            onClick={() => setShowModal(true)} // Abre o modal ao invés de iniciar o pagamento direto
+            onClick={handlePayPress} // Verifica se o usuário está logado antes de iniciar o pagamento
             className="bg-white text-blue-600 font-semibold py-2 px-6 rounded-lg shadow-lg hover:bg-gray-200 transition duration-300"
           >
             Assinar e Acessar o Curso
