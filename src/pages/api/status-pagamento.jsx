@@ -18,13 +18,12 @@ const addItem = async () => {
 
 export default async function handler(req, res) {
 
-  
   if (req.method === "POST") {
     console.log("requisição recebida", req.body);
 
     addItem();
     
-    res.status(200).json({ status: "REQUISIÇAO RECEBIDA" + email + uid });
+    res.status(200).json({ status: "REQUISIÇAO RECEBIDA"});
   } else if (req.method === "GET") {
     res.status(200).json({ status: "GET RECEBIDO" });
   } else {
