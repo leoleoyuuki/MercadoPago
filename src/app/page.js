@@ -57,7 +57,7 @@ const PaymentScreen = () => {
       const response = await fetch('/api/create-preference', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ amount: 10, description: 'Pagamento de teste', payer: email, id: userId }),
+        body: JSON.stringify({ amount: 1, description: 'Pagamento de teste', payer: email, id: userId }),
       });
       const { preferenceId } = await response.json();
       window.location.href = `https://www.mercadopago.com.br/checkout/v1/redirect?pref_id=${preferenceId}`;
