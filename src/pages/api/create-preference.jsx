@@ -30,6 +30,12 @@ export default async function handler(req, res) {
             email: payer,
           },
           external_reference: id,
+          payment_methods: {
+            installments: 1, // Limite de parcelas se necessário
+            default_payment_method_id: 'pix', // Adiciona PIX como método de pagamento padrão
+          },
+
+
         },
         {
           headers: {
