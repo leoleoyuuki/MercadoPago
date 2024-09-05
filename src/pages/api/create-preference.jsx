@@ -24,8 +24,9 @@ export default async function handler(req, res) {
           ],
           auto_return: 'approved',
           back_urls: {
-            success: `${process.env.SUCCESS_REDIRECT_URL}`,
+            success: `${process.env.WEBSITE_URL}/success`,
           },
+          notification_url: `${process.env.WEBSITE_URL}/api/status-pagamento`,
           payer: {
             email: payer,
           },
