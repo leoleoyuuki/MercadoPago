@@ -26,7 +26,6 @@ export default async function handler(req, res) {
           back_urls: {
             success: `${process.env.WEBSITE_URL}/success`,
           },
-          notification_url: `${process.env.WEBSITE_URL}/api/status-pagamento`,
           payer: {
             email: payer,
           },
