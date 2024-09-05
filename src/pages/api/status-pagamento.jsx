@@ -3,6 +3,8 @@ import { headers } from "next/headers";
 import {addDoc,collection,db} from "../../service/firebasesdk"
 import axios from "axios";
 
+const MERCADO_PAGO_ACCESS_TOKEN = process.env.MERCADO_PAGO_ACCESS_TOKEN;
+
 
 export default async function handler(req, res) {
 
@@ -14,7 +16,7 @@ export default async function handler(req, res) {
     try {
       const response = await axios.get(`https://api.mercadopago.com/v1/payments/${id}`, {
         headers: {
-          'Authorization': 'Bearer TEST-5451710554063836-081815-2e6df1c787b904657c2fcac56e7b3586-486596499'
+          'Authorization': `Bearer ${MERCADO_PAGO_ACCESS_TOKEN}`,
         }
       });
     
