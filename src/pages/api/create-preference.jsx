@@ -22,6 +22,7 @@ export default async function handler(req, res) {
               quantity: 1,
             },
           ],
+          payment_method_id: "Pix",
           auto_return: 'approved',
           back_urls: {
             success: `${process.env.WEBSITE_URL}/success`,
@@ -30,8 +31,6 @@ export default async function handler(req, res) {
             email: payer,
           },
           external_reference: id,
-          payment_method_id: 'Pix',
-
 
         },
         {
