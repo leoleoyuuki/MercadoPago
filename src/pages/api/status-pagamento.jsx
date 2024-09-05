@@ -23,7 +23,7 @@ export default async function handler(req, res) {
       const data = response.data;
     
       console.log('Dados do pagamento:', data);
-      console.log("");
+      console.log("Status do pagamento:", data.status);
       const uid = data.additional_info.payer.first_name;
       console.log('Uid do usuário usando gambiarra: ', uid);
       
