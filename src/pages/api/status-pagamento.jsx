@@ -23,7 +23,7 @@ export default async function handler(req, res) {
 
       console.log("Dados do pagamento:", data);
       console.log("Status do pagamento:", data.status);
-      const uid = data.additional_info.payer.first_name;
+      const uid = data.external_reference;
       console.log("Uid do usuário usando gambiarra: ", uid);
 
       if (data.status === "approved") {

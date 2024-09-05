@@ -28,8 +28,8 @@ export default async function handler(req, res) {
           },
           payer: {
             email: payer,
-            name: id,
           },
+          external_reference: id,
         },
         {
           headers: {
