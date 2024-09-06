@@ -310,22 +310,22 @@ const PaymentScreen = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="p-6 bg-gray-100 rounded-lg shadow-lg">
               <p className="text-gray-700 mb-4">
-                "Esse curso mudou minha vida! A didática é incrível e os
-                exercícios práticos são desafiadores."
+              &quot;Esse curso mudou minha vida! A didática é incrível e os
+                exercícios práticos são desafiadores.&quot;
               </p>
               <h3 className="text-xl font-semibold">João Silva</h3>
             </div>
             <div className="p-6 bg-gray-100 rounded-lg shadow-lg">
               <p className="text-gray-700 mb-4">
-                "Esse curso mudou minha vida! A didática é incrível e os
-                exercícios práticos são desafiadores."
+              &quot;Esse curso mudou minha vida! A didática é incrível e os
+                exercícios práticos são desafiadores.&quot;
               </p>
               <h3 className="text-xl font-semibold">Leonardo Yuuki</h3>
             </div>
             <div className="p-6 bg-gray-100 rounded-lg shadow-lg">
               <p className="text-gray-700 mb-4">
-                "Aprendi mais em 2 meses aqui do que em 2 anos Na Faculdade.
-                Muito Top!"
+              &quot;Aprendi mais em 2 meses aqui do que em 2 anos Na Faculdade.
+                Muito Top!&quot;
               </p>
               <h3 className="text-xl font-semibold">Maria Santos</h3>
             </div>
