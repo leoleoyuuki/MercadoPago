@@ -2,22 +2,43 @@
 import { useEffect, useState } from 'react';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
-import { auth } from '@/service/firebasesdk';
+import { auth, collection, db, getDocs, query, where } from '@/service/firebasesdk';
 
 const PlatformPage = () => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [assinaturaPaga, setAssinaturaPaga] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
-    // Verifica o estado da autenticação
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
         setUser(user); // Usuário logado
         setLoading(false);
+
+        const checkAssinatura = async (uid) => {
+          try {
+            const assinaturasRef = collection(db, "Assinaturas");
+            const q = query(assinaturasRef, where("userId", "==", uid));
+            const querySnapshot = await getDocs(q);
+
+            if (querySnapshot.empty) {
+              setAssinaturaPaga(false);
+              router.push('/subscribe'); // Redireciona para página de assinatura se não tiver assinatura
+            } else {
+              setAssinaturaPaga(true);
+            }
+          } catch (e) {
+            console.error("Erro ao buscar assinaturas: ", e);
+          }
+        };
+
+        // Verifica a assinatura do usuário logado
+        checkAssinatura(user.uid);
       } else {
         setUser(null); // Redefine o estado
         setLoading(false);
+        setAssinaturaPaga(false);
         router.push('/'); // Redireciona para tela principal se não estiver logado
       }
     });
@@ -36,6 +57,10 @@ const PlatformPage = () => {
 
   if (loading) {
     return <p className="text-center mt-10">Carregando...</p>; // Mostra uma tela de loading
+  }
+
+  if (!assinaturaPaga) {
+    return <p className="text-center mt-10">Verificando assinatura...</p>; // Mensagem enquanto verifica a assinatura
   }
 
   return (

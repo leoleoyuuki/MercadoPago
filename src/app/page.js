@@ -33,6 +33,7 @@ const PaymentScreen = () => {
       if (user) {
         setUser(user); // Define o usuário logado
         setUserId(user.uid); // Define o userId
+        checkAssinatura(user.uid); // Verifica a assinatura ao iniciar
       } else {
         setUser(null); // Se não houver usuário logado
         setUserId("");
@@ -44,44 +45,32 @@ const PaymentScreen = () => {
   }, []);
 
   // Verifica se o usuário tem assinatura
-  const checkAssinatura = async () => {
-    const currentUser = auth.currentUser;
-    if (!currentUser) return;
-
-    setUser(currentUser);
-    const uid = currentUser.uid;
-    setUserId(uid);
-
+  const checkAssinatura = async (uid) => {
     try {
       const assinaturasRef = collection(db, "Assinaturas");
-      const q = query(assinaturasRef, where("userId", "==", userId));
+      const q = query(assinaturasRef, where("userId", "==", uid));
       const querySnapshot = await getDocs(q);
 
       if (querySnapshot.empty) {
         setAssinaturaPaga(false);
-        return false; // Não tem assinatura
       } else {
         setAssinaturaPaga(true);
-        return true; // Já tem assinatura
       }
     } catch (e) {
       console.error("Erro ao buscar assinaturas: ", e);
-      return false;
     }
   };
 
   const handlePayPress = async () => {
-    const currentUser = auth.currentUser;
-
-    if (!currentUser) {
+    if (!user) {
       setShowModal(true); // Abre o modal se não estiver logado
       return;
     }
 
-    // Verifica a assinatura após login
-    const hasAssinatura = await checkAssinatura();
+    // Verifica a assinatura antes de prosseguir
+    await checkAssinatura(userId);
 
-    if (hasAssinatura) {
+    if (assinaturaPaga) {
       // Redireciona para a plataforma se já tiver assinatura
       window.location.href = "/plataforma";
     } else {
@@ -93,7 +82,7 @@ const PaymentScreen = () => {
           body: JSON.stringify({
             amount: 10,
             description: "Pagamento de teste",
-            payer: currentUser.email,
+            payer: user.email,
           }),
         });
         const { preferenceId } = await response.json();
@@ -115,7 +104,9 @@ const PaymentScreen = () => {
         await createUserWithEmailAndPassword(auth, email, password);
         setShowModal(false);
 
-        // Após cadastro, verifica a assinatura
+        // Após cadastro, faz login e verifica a assinatura
+        await signInWithEmailAndPassword(auth, email, password);
+        await checkAssinatura(auth.currentUser.uid);
         handlePayPress(); // Verifica a assinatura e cria a preferência de pagamento se necessário
       } catch (error) {
         setError(error.message);
@@ -126,6 +117,7 @@ const PaymentScreen = () => {
         setShowModal(false);
 
         // Após login, verifica a assinatura
+        await checkAssinatura(auth.currentUser.uid);
         handlePayPress(); // Verifica a assinatura e cria a preferência de pagamento se necessário
       } catch (error) {
         setError(error.message);
@@ -197,6 +189,8 @@ const PaymentScreen = () => {
           </button>
         </div>
       </section>
+
+      {/* Outras seções do seu código */}
 
       <section id="pricing" className="bg-white py-16">
         <div className="container mx-auto text-center">
@@ -517,59 +511,73 @@ const PaymentScreen = () => {
         </div>
       </footer>
 
-      {/* Modal de Login/Signup */}
-      {showModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-8 rounded-lg shadow-lg">
-            <button
-              onClick={() => setShowModal(false)}
-              className="float-right text-xl rounded-full mb-4"
+       {/* Modal para login e cadastro */}
+       {showModal && (
+        <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 z-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
+            <h2 className="text-xl font-bold mb-4">{isSignup ? "Cadastro" : "Login"}</h2>
+            {error && <p className="text-red-500 mb-4">{error}</p>}
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                handleAuth();
+              }}
             >
-              <h1 className="text-red-500 hover:bg-red-500 hover:text-white transition duration-300 p-1 px-3 rounded-full">
-                X
-              </h1>
-            </button>
-            <h3 className="text-xl font-semibold mb-4">
-              {isSignup ? "Cadastro" : "Login"}
-            </h3>
-            <input
-              type="email"
-              className="w-full mb-4 p-2 border rounded"
-              placeholder="Email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-            <input
-              type="password"
-              className="w-full mb-4 p-2 border rounded"
-              placeholder="Senha"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-            {isSignup && (
-              <input
-                type="password"
-                className="w-full mb-4 p-2 border rounded"
-                placeholder="Confirmar Senha"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-              />
-            )}
-            <button
-              onClick={handleAuth}
-              className="w-full bg-blue-600 text-white py-2 rounded-lg shadow-lg hover:bg-blue-700 transition duration-300"
-            >
-              {isSignup ? "Cadastrar" : "Entrar"}
-            </button>
-            <p
-              className="text-center mt-4 cursor-pointer text-blue-600"
-              onClick={() => setIsSignup(!isSignup)}
-            >
-              {isSignup
-                ? "Já possui conta? Faça login"
-                : "Não possui conta? Cadastre-se"}
-            </p>
-            {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
+              <div className="mb-4">
+                <label className="block text-gray-700 mb-2" htmlFor="email">
+                  Email
+                </label>
+                <input
+                  type="email"
+                  id="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  className="w-full px-3 py-2 border border-gray-300 rounded"
+                />
+              </div>
+              <div className="mb-4">
+                <label className="block text-gray-700 mb-2" htmlFor="password">
+                  Senha
+                </label>
+                <input
+                  type="password"
+                  id="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  className="w-full px-3 py-2 border border-gray-300 rounded"
+                />
+              </div>
+              {isSignup && (
+                <div className="mb-4">
+                  <label className="block text-gray-700 mb-2" htmlFor="confirmPassword">
+                    Confirmar Senha
+                  </label>
+                  <input
+                    type="password"
+                    id="confirmPassword"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    required
+                    className="w-full px-3 py-2 border border-gray-300 rounded"
+                  />
+                </div>
+              )}
+              <button
+                type="submit"
+                className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700"
+              >
+                {isSignup ? "Cadastrar" : "Entrar"}
+              </button>
+              <button
+                type="button"
+                onClick={() => setIsSignup(!isSignup)}
+                className="mt-4 text-blue-600 hover:underline"
+              >
+                {isSignup ? "Já tem uma conta? Entrar" : "Não tem uma conta? Cadastrar"}
+              </button>
+            </form>
           </div>
         </div>
       )}
