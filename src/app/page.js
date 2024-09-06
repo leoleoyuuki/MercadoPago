@@ -4,13 +4,14 @@ import { auth } from "../service/firebasesdk";
 import { collection, query, where, getDocs } from "firebase/firestore";
 import { db } from "../service/firebasesdk";
 import { initMercadoPago } from "@mercadopago/sdk-react";
-import { Link } from "next/link";
+import { useRouter } from "next/navigation";
 import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
   signOut,
 } from "firebase/auth";
-import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { Alert } from "react-bootstrap";
 
 // Inicializa o MercadoPago
 initMercadoPago(process.env.MERCADO_PAGO_ACCESS_TOKEN);
@@ -25,7 +26,9 @@ const PaymentScreen = () => {
   const [userId, setUserId] = useState("");
   const [user, setUser] = useState(null);
   const [error, setError] = useState("");
-
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(true); // Spinner state
+  const [loadingText, setLoadingText] = useState("Carregando..."); // Text state
   const router = useRouter();
 
   useEffect(() => {
@@ -38,6 +41,7 @@ const PaymentScreen = () => {
         setUser(null);
         setUserId("");
       }
+      setIsLoading(false); // Spinner stops once auth is checked
     });
 
     return () => unsubscribe();
@@ -45,6 +49,8 @@ const PaymentScreen = () => {
 
   const checkAssinatura = async (uid) => {
     try {
+      setIsLoading(true);
+      setLoadingText("Verificando assinatura..."); // Change text when checking subscription
       const assinaturasRef = collection(db, "Assinaturas");
       const q = query(assinaturasRef, where("userId", "==", uid));
       const querySnapshot = await getDocs(q);
@@ -56,6 +62,8 @@ const PaymentScreen = () => {
       }
     } catch (e) {
       console.error("Erro ao buscar assinaturas: ", e);
+    } finally {
+      setIsLoading(false); // Spinner stops after checking subscription
     }
   };
 
@@ -89,6 +97,15 @@ const PaymentScreen = () => {
     }
   };
 
+  const handleOnlyAuth = async () => {
+    if (!user) {
+      setShowModal(true);
+      return;
+    } else {
+      alert("Você já está logado!");
+    }
+  };
+
   const handleAuth = async () => {
     if (isSignup) {
       if (password !== confirmPassword) {
@@ -113,12 +130,11 @@ const PaymentScreen = () => {
       }
     }
 
-    // Após o login ou cadastro, verificar a assinatura e prosseguir com o pagamento
     if (auth.currentUser) {
       setUser(auth.currentUser);
       setUserId(auth.currentUser.uid);
       await checkAssinatura(auth.currentUser.uid);
-      handlePayPress(); // Mover aqui para garantir que o modal não abra duas vezes
+      handlePayPress();
     }
   };
 
@@ -132,42 +148,136 @@ const PaymentScreen = () => {
     }
   };
 
+  // Spinner and loading screen component
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100">
+        <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-blue-500 border-solid"></div>
+        <h2 className="mt-4 text-2xl font-semibold">{loadingText}</h2>
+        <p className="text-gray-600 mt-2">
+          Por favor, aguarde enquanto verificamos sua assinatura.
+        </p>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-white text-gray-900">
-      {/* Conteúdo da página */}
-      <header className="bg-blue-600 text-white py-4">
-        <div className="container mx-auto flex justify-between px-10 items-center">
-          <h1 className="text-3xl font-bold">Curso de Programação</h1>
-          <nav>
-            <ul className="flex space-x-4">
-              <li>
-                <a href="#benefits" className="hover:text-blue-200">
-                  Benefícios
-                </a>
-              </li>
-              <li>
-                <a href="#pricing" className="hover:text-blue-200">
-                  Preços
-                </a>
-              </li>
-              <li>
-                <a href="#testimonials" className="hover:text-blue-200">
-                  Depoimentos
-                </a>
-              </li>
-              {user != null && (
-                <li>
-                  <button
-                    onClick={handleLogout}
-                    className="bg-red-500 px-3 rounded text-white hover:bg-red-600"
-                  >
-                    Sair de {user?.email}
-                  </button>
-                </li>
-              )}
-            </ul>
+      {/* Header */}
+      <header className="bg-white shadow-md">
+        <div className="container mx-auto flex items-center justify-between py-4 px-6">
+          {/* Logo */}
+          <div className="text-2xl font-bold text-blue-600">
+            <a href="/">BrandLogo</a>
+          </div>
+
+          {/* Desktop Navigation */}
+          <nav className="hidden md:flex space-x-6 text-lg">
+            <Link
+              href="#home"
+              className="text-gray-600 hover:text-blue-600 transition-colors"
+            >
+              Home
+            </Link>
+            <Link
+              href="#pricing"
+              className="text-gray-600 hover:text-blue-600 transition-colors"
+            >
+              Planos
+            </Link>
+            <Link
+              href="#vsl"
+              className="text-gray-600 hover:text-blue-600 transition-colors"
+            >
+              Sobre
+            </Link>
+            <Link
+              href="#testimonials"
+              className="text-gray-600 hover:text-blue-600 transition-colors"
+            >
+              Depoimentos
+            </Link>
           </nav>
+
+          {/* Login Button (Desktop) */}
+          <div className="hidden md:flex items-center">
+            <button
+              onClick={handleOnlyAuth}
+              className="text-white bg-blue-600 hover:bg-blue-700 py-2 px-4 rounded-md transition-colors"
+            >
+              Login
+            </button>
+            {user && (
+              <button
+                onClick={handleLogout}
+                className="
+              text-red-500 hover:text-blue-700 ml-4 transition-colors"
+              >
+                Logout
+              </button>
+            )}
+          </div>
+
+          {/* Mobile Menu Button */}
+          <div className="md:hidden flex items-center">
+            <button
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              className="text-blue-600 focus:outline-none"
+              aria-label="Open Menu"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M4 6h16M4 12h16m-7 6h7"
+                />
+              </svg>
+            </button>
+          </div>
         </div>
+
+        {/* Mobile Menu */}
+        {isMenuOpen && (
+          <nav className="md:hidden bg-white shadow-md absolute top-16 left-0 w-full py-4 px-6">
+            <Link
+              href="/"
+              className="block py-2 text-gray-600 hover:text-blue-600 transition-colors"
+            >
+              Home
+            </Link>
+            <Link
+              href="#pricing"
+              className="block py-2 text-gray-600 hover:text-blue-600 transition-colors"
+            >
+              Planos
+            </Link>
+            <Link
+              href="#vsl"
+              className="block py-2 text-gray-600 hover:text-blue-600 transition-colors"
+            >
+              Sobre
+            </Link>
+            <Link
+              href="#testimonials"
+              className="block py-2 text-gray-600 hover:text-blue-600 transition-colors"
+            >
+              Depoimentos
+            </Link>
+            <Link
+              href="#login"
+              className="block py-2 mt-4 text-white bg-blue-600 hover:bg-blue-700 py-2 px-4 rounded-md transition-colors"
+            >
+              Login
+            </Link>
+          </nav>
+        )}
       </header>
 
       <section className="bg-blue-500 text-white py-28 text-center">
@@ -301,29 +411,28 @@ const PaymentScreen = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="p-6 bg-gray-100 rounded-lg shadow-lg">
               <p className="text-gray-700 mb-4">
-              &quot;Esse curso mudou minha vida! A didática é incrível e os
+                &quot;Esse curso mudou minha vida! A didática é incrível e os
                 exercícios práticos são desafiadores.&quot;
               </p>
               <h3 className="text-xl font-semibold">João Silva</h3>
             </div>
             <div className="p-6 bg-gray-100 rounded-lg shadow-lg">
               <p className="text-gray-700 mb-4">
-              &quot;Esse curso mudou minha vida! A didática é incrível e os
+                &quot;Esse curso mudou minha vida! A didática é incrível e os
                 exercícios práticos são desafiadores.&quot;
               </p>
               <h3 className="text-xl font-semibold">Leonardo Yuuki</h3>
             </div>
             <div className="p-6 bg-gray-100 rounded-lg shadow-lg">
               <p className="text-gray-700 mb-4">
-              &quot;Aprendi mais em 2 meses aqui do que em 2 anos Na Faculdade.
-                Muito Top!&quot;
+                &quot;Aprendi mais em 2 meses aqui do que em 2 anos Na
+                Faculdade. Muito Top!&quot;
               </p>
               <h3 className="text-xl font-semibold">Maria Santos</h3>
             </div>
           </div>
         </div>
       </section>
-
 
       <footer className="bg-gray-900 text-gray-300 pt-14 pb-8 px-10 pl-24">
         <div className="container grid grid-cols-1 md:grid-cols-4 gap-10">
@@ -508,8 +617,8 @@ const PaymentScreen = () => {
           </p>
         </div>
       </footer>
-{/* Modal de Login/Signup */}
-{showModal && (
+      {/* Modal de Login/Signup */}
+      {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white p-8 rounded-lg shadow-lg">
             <button
