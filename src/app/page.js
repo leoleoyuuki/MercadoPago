@@ -434,8 +434,8 @@ const PaymentScreen = () => {
         </div>
       </section>
 
-      <footer className="bg-gray-900 text-gray-300 pt-14 pb-8 px-10 pl-24">
-        <div className="container grid grid-cols-1 md:grid-cols-4 gap-10">
+      <footer className="bg-gray-900 text-gray-300 pt-14 pb-8 px-10">
+        <div className="container grid mx-auto grid-cols-1 md:grid-cols-4 gap-10">
           {/* Sobre Nós */}
           <div>
             <h3 className="text-white text-2xl font-semibold mb-2">
