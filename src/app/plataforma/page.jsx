@@ -3,6 +3,9 @@ import { useEffect, useState } from "react";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import { where,  query} from "firebase/firestore";
+import { Spinner } from "react-bootstrap"; // Importa o spinner do react-bootstrap
+
+
 import {
   auth,
   collection,
@@ -81,11 +84,23 @@ const PlatformPage = () => {
   };
 
   if (loading) {
-    return <p className="text-center mt-10">Carregando...</p>;
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
+        <Spinner animation="border" />
+        <h1 className="text-xl font-bold mt-4">Carregando...</h1>
+        <p className="mt-2">Estamos processando suas informações. Por favor, aguarde.</p>
+      </div>
+    );
   }
 
   if (!assinaturaPaga) {
-    return <p className="text-center mt-10">Verificando assinatura...</p>;
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
+        <Spinner animation="border" />
+        <h1 className="text-xl font-bold mt-4">Verificando Assinatura...</h1>
+        <p className="mt-2">Estamos verificando sua assinatura. Por favor, aguarde.</p>
+      </div>
+    );
   }
 
   return (
