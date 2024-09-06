@@ -1,8 +1,14 @@
-"use client"
-import { useEffect, useState } from 'react';
-import { onAuthStateChanged, signOut } from 'firebase/auth';
-import { useRouter } from 'next/navigation';
-import { auth, collection, db, getDocs, query, where } from '@/service/firebasesdk';
+"use client";
+import { useEffect, useState } from "react";
+import { onAuthStateChanged, signOut } from "firebase/auth";
+import { useRouter } from "next/navigation";
+import { where,  query} from "firebase/firestore";
+import {
+  auth,
+  collection,
+  db,
+  getDocs,
+} from "@/service/firebasesdk";
 
 const PlatformPage = () => {
   const [user, setUser] = useState(null);
@@ -10,59 +16,76 @@ const PlatformPage = () => {
   const [assinaturaPaga, setAssinaturaPaga] = useState(false);
   const router = useRouter();
 
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        setUser(user); // Usuário logado
-        setLoading(true); // Inicia o carregamento enquanto verifica a assinatura
+  const checkUserAndSubscription = async (uid) => {
+    setLoading(true);
+    try {
+      const assinaturasRef = collection(db, "Assinaturas");
+      const q = query(assinaturasRef, where("userId", "==", uid));
+      const querySnapshot = await getDocs(q);
 
-        const checkAssinatura = async (uid) => {
-          try {
-            const assinaturasRef = collection(db, "Assinaturas");
-            const q = query(assinaturasRef, where("userId", "==", uid));
-            const querySnapshot = await getDocs(q);
-
-            if (querySnapshot.empty) {
-              setAssinaturaPaga(false);
-              router.push('/subscribe'); // Redireciona para página de assinatura se não tiver assinatura
-            } else {
-              setAssinaturaPaga(true);
-              setLoading(false); // Conclui o carregamento se a assinatura estiver paga
-            }
-          } catch (e) {
-            console.error("Erro ao buscar assinaturas: ", e);
-            setLoading(false); // Conclui o carregamento mesmo se houver erro
-          }
-        };
-
-        // Verifica a assinatura do usuário logado
-        checkAssinatura(user.uid);
-      } else {
-        setUser(null); // Redefine o estado
-        setLoading(false);
+      if (querySnapshot.empty) {
         setAssinaturaPaga(false);
-        router.push('/'); // Redireciona para tela principal se não estiver logado
+        router.push("/");
+      } else {
+        setAssinaturaPaga(true);
+      }
+    } catch (e) {
+      console.error("Erro ao buscar assinaturas: ", e);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    const handleFocus = () => {
+      const userM = auth.currentUser;
+      if (userM) {
+        setUser(userM);
+        checkUserAndSubscription(userM.uid);
+      } else {
+        setUser(null);
+        setAssinaturaPaga(false);
+        router.push("/");
+      }
+    };
+
+    // Adiciona o listener para focus
+    window.addEventListener("focus", handleFocus);
+
+    // Verifica o estado inicial do usuário
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setUser(user);
+        checkUserAndSubscription(user.uid);
+      } else {
+        setUser(null);
+        setAssinaturaPaga(false);
+        router.push("/");
       }
     });
 
-    return () => unsubscribe(); // Cleanup on component unmount
-  }, [auth, router]);
+    // Cleanup: remove o listener e unsubscribe quando o componente é desmontado
+    return () => {
+      window.removeEventListener("focus", handleFocus);
+      unsubscribe();
+    };
+  }, [router]);
 
   const handleLogout = async () => {
     try {
       await signOut(auth);
-      router.push('/');
+      router.push("/");
     } catch (error) {
-      console.error('Erro ao fazer logout:', error);
+      console.error("Erro ao fazer logout:", error);
     }
   };
 
   if (loading) {
-    return <p className="text-center mt-10">Carregando...</p>; // Mostra uma tela de loading
+    return <p className="text-center mt-10">Carregando...</p>;
   }
 
   if (!assinaturaPaga) {
-    return <p className="text-center mt-10">Verificando assinatura...</p>; // Mensagem enquanto verifica a assinatura
+    return <p className="text-center mt-10">Verificando assinatura...</p>;
   }
 
   return (
