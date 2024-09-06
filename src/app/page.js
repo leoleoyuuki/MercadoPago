@@ -508,88 +508,59 @@ const PaymentScreen = () => {
           </p>
         </div>
       </footer>
-
-      {/* Modal */}
-      {showModal && (
-        <div
-          className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50"
-          onClick={() => setShowModal(false)}
-        >
-          <div
-            className="bg-white p-6 rounded-lg shadow-lg max-w-sm w-full"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <h2 className="text-xl font-semibold mb-4">
-              {isSignup ? "Criar Conta" : "Login"}
-            </h2>
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                handleAuth();
-              }}
+{/* Modal de Login/Signup */}
+{showModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-8 rounded-lg shadow-lg">
+            <button
+              onClick={() => setShowModal(false)}
+              className="float-right text-xl rounded-full mb-4"
             >
-              <div className="mb-4">
-                <label htmlFor="email" className="block text-gray-700 mb-2">
-                  E-mail
-                </label>
-                <input
-                  type="email"
-                  id="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="w-full border border-gray-300 p-2 rounded"
-                  required
-                />
-              </div>
-              <div className="mb-4">
-                <label htmlFor="password" className="block text-gray-700 mb-2">
-                  Senha
-                </label>
-                <input
-                  type="password"
-                  id="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="w-full border border-gray-300 p-2 rounded"
-                  required
-                />
-              </div>
-              {isSignup && (
-                <div className="mb-4">
-                  <label
-                    htmlFor="confirmPassword"
-                    className="block text-gray-700 mb-2"
-                  >
-                    Confirmar Senha
-                  </label>
-                  <input
-                    type="password"
-                    id="confirmPassword"
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    className="w-full border border-gray-300 p-2 rounded"
-                    required
-                  />
-                </div>
-              )}
-              <div className="text-red-500 mb-4">{error}</div>
-              <button
-                type="submit"
-                className="bg-blue-600 text-white px-4 py-2 rounded"
-              >
-                {isSignup ? "Criar Conta" : "Entrar"}
-              </button>
-            </form>
-            <div className="mt-4 text-center">
-              <button
-                className="text-blue-600"
-                onClick={() => setIsSignup(!isSignup)}
-              >
-                {isSignup
-                  ? "Já tem uma conta? Entre aqui"
-                  : "Não tem uma conta? Crie aqui"}
-              </button>
-            </div>
+              <h1 className="text-red-500 hover:bg-red-500 hover:text-white transition duration-300 p-1 px-3 rounded-full">
+                X
+              </h1>
+            </button>
+            <h3 className="text-xl font-semibold mb-4">
+              {isSignup ? "Cadastro" : "Login"}
+            </h3>
+            <input
+              type="email"
+              className="w-full mb-4 p-2 border rounded"
+              placeholder="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+            <input
+              type="password"
+              className="w-full mb-4 p-2 border rounded"
+              placeholder="Senha"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+            {isSignup && (
+              <input
+                type="password"
+                className="w-full mb-4 p-2 border rounded"
+                placeholder="Confirmar Senha"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+              />
+            )}
+            <button
+              onClick={handleAuth}
+              className="w-full bg-blue-600 text-white py-2 rounded-lg shadow-lg hover:bg-blue-700 transition duration-300"
+            >
+              {isSignup ? "Cadastrar" : "Entrar"}
+            </button>
+            <p
+              className="text-center mt-4 cursor-pointer text-blue-600"
+              onClick={() => setIsSignup(!isSignup)}
+            >
+              {isSignup
+                ? "Já possui conta? Faça login"
+                : "Não possui conta? Cadastre-se"}
+            </p>
+            {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
           </div>
         </div>
       )}
