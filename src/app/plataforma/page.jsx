@@ -14,7 +14,7 @@ const PlatformPage = () => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
         setUser(user); // Usuário logado
-        setLoading(false);
+        setLoading(true); // Inicia o carregamento enquanto verifica a assinatura
 
         const checkAssinatura = async (uid) => {
           try {
@@ -27,9 +27,11 @@ const PlatformPage = () => {
               router.push('/subscribe'); // Redireciona para página de assinatura se não tiver assinatura
             } else {
               setAssinaturaPaga(true);
+              setLoading(false); // Conclui o carregamento se a assinatura estiver paga
             }
           } catch (e) {
             console.error("Erro ao buscar assinaturas: ", e);
+            setLoading(false); // Conclui o carregamento mesmo se houver erro
           }
         };
 
