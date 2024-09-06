@@ -15,8 +15,14 @@ const PlatformPage = () => {
       if (user) {
         setUser(user); // Usuário logado
         setLoading(true); // Inicia o carregamento enquanto verifica a assinatura
-
-        const checkAssinatura = async (uid) => {
+      } else {
+        setUser(null); // Redefine o estado
+        setLoading(false);
+        setAssinaturaPaga(false);
+        router.push('/'); // Redireciona para tela principal se não estiver logado
+      }
+    });
+    const checkAssinatura = async (uid) => {
           try {
             const assinaturasRef = collection(db, "Assinaturas");
             const q = query(assinaturasRef, where("userId", "==", uid));
@@ -36,14 +42,7 @@ const PlatformPage = () => {
         };
 
         // Verifica a assinatura do usuário logado
-        checkAssinatura(user.uid);
-      } else {
-        setUser(null); // Redefine o estado
-        setLoading(false);
-        setAssinaturaPaga(false);
-        router.push('/'); // Redireciona para tela principal se não estiver logado
-      }
-    });
+    checkAssinatura(user.uid);
 
     return () => unsubscribe(); // Cleanup on component unmount
   }, [auth, router]);
