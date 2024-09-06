@@ -83,6 +83,7 @@ const PaymentScreen = () => {
             amount: 10,
             description: "Pagamento de teste",
             payer: user.email,
+            id: userId,
           }),
         });
         const { preferenceId } = await response.json();
