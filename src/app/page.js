@@ -613,7 +613,7 @@ const PaymentScreen = () => {
 
         <div className="mt-8 border-t border-gray-700 pt-8 text-center">
           <p className="text-gray-500">
-            © 2024 Seu Curso de Programação. Todos os direitos reservados.
+            &copy; Desenvolvido por <a href="https://github.com/leoleoyuuki" target="_blank">leoyuuki</a>.
           </p>
         </div>
       </footer>
