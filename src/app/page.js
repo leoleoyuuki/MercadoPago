@@ -116,6 +116,7 @@ const PaymentScreen = () => {
       try {
         await createUserWithEmailAndPassword(auth, email, password);
         await signInWithEmailAndPassword(auth, email, password); // Faz login após o cadastro
+        setUser(auth.currentUser);
         setShowModal(false);
       } catch (error) {
         setError(error.message);
@@ -134,7 +135,11 @@ const PaymentScreen = () => {
       setUser(auth.currentUser);
       setUserId(auth.currentUser.uid);
       await checkAssinatura(auth.currentUser.uid);
-      handlePayPress();
+
+      // Agora só chama handlePayPress se a assinatura foi verificada
+      if (!assinaturaPaga) {
+        handlePayPress();
+      }
     }
   };
 
@@ -201,17 +206,27 @@ const PaymentScreen = () => {
 
           {/* Login Button (Desktop) */}
           <div className="hidden md:flex items-center">
-            <button
-              onClick={handleOnlyAuth}
-              className="text-white bg-blue-600 hover:bg-blue-700 py-2 px-4 rounded-md transition-colors"
-            >
-              Login
-            </button>
+            {user ? null : (
+              <button
+                onClick={handleOnlyAuth}
+                className="text-white bg-blue-600 hover:bg-blue-700 py-2 px-4 rounded-md transition-colors"
+              >
+                Login
+              </button>
+            )}
+
             {user && (
+              // <button
+              //   onClick={handleLogout}
+              //   className="
+              // text-red-500 border-2 border-red-300 hover:text-red-800 hover:border-red-700 py-2 px-4 rounded-md ml-4 transition-colors"
+              // >
+              //   Logout
+              // </button>
               <button
                 onClick={handleLogout}
                 className="
-              text-red-500 hover:text-blue-700 ml-4 transition-colors"
+              text-white bg-red-500 hover:bg-red-800 py-2 px-4 rounded-md ml-4 transition-colors"
               >
                 Logout
               </button>
@@ -613,7 +628,11 @@ const PaymentScreen = () => {
 
         <div className="mt-8 border-t border-gray-700 pt-8 text-center">
           <p className="text-gray-500">
-            &copy; Desenvolvido por <a href="https://github.com/leoleoyuuki" target="_blank">leoyuuki</a>.
+            &copy; Desenvolvido por{" "}
+            <a href="https://github.com/leoleoyuuki" target="_blank">
+              leoyuuki
+            </a>
+            .
           </p>
         </div>
       </footer>
@@ -634,14 +653,14 @@ const PaymentScreen = () => {
             </h3>
             <input
               type="email"
-              className="w-full mb-4 p-2 border rounded"
+              className="w-full bg-white mb-4 p-2 border rounded"
               placeholder="Email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
             <input
               type="password"
-              className="w-full mb-4 p-2 border rounded"
+              className="w-full bg-white  mb-4 p-2 border rounded"
               placeholder="Senha"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -649,7 +668,7 @@ const PaymentScreen = () => {
             {isSignup && (
               <input
                 type="password"
-                className="w-full mb-4 p-2 border rounded"
+                className="w-full bg-white  mb-4 p-2 border rounded"
                 placeholder="Confirmar Senha"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
