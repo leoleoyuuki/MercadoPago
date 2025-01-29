@@ -399,18 +399,17 @@ const PaymentScreen = () => {
           <h2 className="text-4xl font-bold mb-8">
             Descubra Como Nossa Plataforma Funciona
           </h2>
-          <div className="mb-8">
-            <iframe
-              className="mx-auto"
-              width="560"
-              height="315"
-              src="https://www.youtube.com/embed/SEU_VIDEO"
-              title="Video de Apresentação"
-              frameBorder="0"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
-            ></iframe>
-          </div>
+          <div className="mb-8 relative w-full pb-[56.25%]">
+  <iframe
+    className="absolute top-0 left-0 w-full h-full"
+    src="https://www.youtube.com/embed/SEU_VIDEO"
+    title="Video de Apresentação"
+    frameBorder="0"
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+    allowFullScreen
+  ></iframe>
+</div>
+
           <p className="text-lg">
             Assista ao vídeo para saber como podemos te ajudar a dominar a
             programação em tempo recorde.
